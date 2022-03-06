@@ -1,3 +1,6 @@
+// Kenneth Witham
+// NUID 001068036
+
 #include "syscall.h"
 #include "traps.h"
 
@@ -29,3 +32,4 @@ SYSCALL(getpid)
 SYSCALL(sbrk)
 SYSCALL(sleep)
 SYSCALL(uptime)
+SYSCALL(date)

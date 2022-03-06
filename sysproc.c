@@ -1,3 +1,6 @@
+// Kenneth Witham
+// NUID 001068036
+
 #include "types.h"
 #include "x86.h"
 #include "defs.h"
@@ -88,4 +91,15 @@ sys_uptime(void)
   xticks = ticks;
   release(&tickslock);
   return xticks;
+}
+
+`// get the current system tie
+int
+sys_date(void)
+{
+  struct rtcdate *d;
+  if(argptr(0, (char**)&d, sizeof(struct rtcdate)) < 0)
+    return -1;
+  cmostime(d);
+  return 0;
 }
