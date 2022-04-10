@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "cstdio": "c",
+        "user.h": "c",
+        "types.h": "c",
+        "spinlock.h": "c",
+        "proc.h": "c",
+        "x86.h": "c",
+        "defs.h": "c"
+    }
+}

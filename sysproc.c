@@ -93,13 +93,91 @@ sys_uptime(void)
   return xticks;
 }
 
-`// get the current system tie
+// translate virtual to physical address
+// Return: Pointer to physical address
+// Errors: -1 for input argument error
+//         -2 for page not allocated
 int
-sys_date(void)
+sys_translate(void)
 {
-  struct rtcdate *d;
-  if(argptr(0, (char**)&d, sizeof(struct rtcdate)) < 0)
+  void *arg;
+  if(argptr(0, (char**)&arg, sizeof(void*)) < 0)
     return -1;
-  cmostime(d);
+
+  pde_t *pgdir = myproc()->pgdir;
+  pte_t *pte;
+  pde_t *pde;
+  pte_t *pgtab;
+
+  pde = &pgdir[PDX(arg)];
+  if(*pde & PTE_P){
+    pgtab = (pte_t*)P2V(PTE_ADDR(*pde));
+    pte = &pgtab[PTX(arg)];
+    if(*pte & PTE_P) {
+      return PTE_ADDR(*pte) | ((uint)arg & 0xFFF);
+    }
+  }
+
+  return -2;
+}
+
+// translate physical to virtual address
+// Return: Pointer to physical address
+// Errors: -1 for input argument error
+//         -2 for address not in page tables
+int
+sys_rtranslate(void)
+{
+  void ** arg;
+  if(argptr(0, (char**)&arg, sizeof(void*)) < 0)
+    return -1;
+
+  pde_t *pgdir = myproc()->pgdir;
+  pte_t *pte;
+  pde_t *pde;
+  pte_t *pgtab;
+  
+  // walk entries until found
+  for (uint i = 0; i < NPDENTRIES; i++){
+    pde = &pgdir[i];
+    if(*pde & PTE_P){
+      pgtab = (pte_t*)P2V(PTE_ADDR(*pde));
+      for (uint j = 0; j < NPTENTRIES; j++){
+        pte =  &pgtab[j];
+        if(*pte & PTE_P){
+          // return (uint)*arg;
+          if (PTE_ADDR(*pte) == PTE_ADDR(*arg)){
+            return PGADDR(i, j, ((uint)*arg & 0xFFF));
+          }
+        }
+      }
+    }
+  }
+
+  return -2;
+}
+
+// Allow process to change its priority. Input is added to priority. Values are clamped to valid range.
+// Returns new priority (-20 to 19). -21 is input error
+int
+sys_nice(void)
+{
+  int arg;
+  if(argptr(0, (char**)&arg, sizeof(void*)) < 0)
+    return -21;
+
+  myproc()->priority += arg;
+  // Clamp value to valid ranges
+  if(myproc()->priority > 19)
+    myproc()->priority = 19;
+  else if(myproc()->priority < -20)
+    myproc()->priority = -20;
+
+  return myproc()->priority;
+}
+
+int sys_yield(void)
+{
+  yield();
   return 0;
 }

@@ -106,7 +106,10 @@ extern int sys_unlink(void);
 extern int sys_wait(void);
 extern int sys_write(void);
 extern int sys_uptime(void);
-extern int sys_date(void);
+extern int sys_translate(void);
+extern int sys_rtranslate(void);
+extern int sys_nice(void);
+extern int sys_yield(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -130,7 +133,10 @@ static int (*syscalls[])(void) = {
 [SYS_link]    sys_link,
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
-[SYS_date]    sys_date
+[SYS_translate]   sys_translate,
+[SYS_rtranslate]  sys_rtranslate,
+[SYS_nice]    sys_nice,
+[SYS_yield]   sys_yield
 };
 
 void

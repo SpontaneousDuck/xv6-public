@@ -23,4 +23,7 @@
 #define SYS_link   19
 #define SYS_mkdir  20
 #define SYS_close  21
-#define SYS_date  22
+#define SYS_translate  22
+#define SYS_rtranslate  23
+#define SYS_nice  24
+#define SYS_yield  25

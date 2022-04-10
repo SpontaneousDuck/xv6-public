@@ -26,7 +26,10 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
-int date(struct rtcdate*);
+void* translate(void*);
+void* rtranslate(void*);
+int nice(int);
+int yield(void);
 
 // ulib.c
 int stat(const char*, struct stat*);
